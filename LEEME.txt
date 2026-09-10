@@ -1,0 +1,34 @@
+VBC MINUTAJES · VERSIÓN DEFINITIVA
+
+QUÉ INCLUYE
+- Pantalla inicial con NUEVO PARTIDO, MIS PARTIDOS y PLANTILLA.
+- Plantilla fija inicial con las 15 jugadoras indicadas.
+- Añadir, editar y borrar jugadoras.
+- Cada nuevo partido parte de la plantilla del equipo.
+- Convocatoria específica por partido.
+- Minutos deseados.
+- Planificación Q1-Q4.
+- Cálculo instantáneo de minutos reales del plan.
+- Diferencia marcado/calculado.
+- Mini barra temporal de 40'.
+- Máximo tramo consecutivo.
+- Combinaciones de 2 a 5 jugadoras.
+- Top 5 quintetos.
+- Guardado automático.
+- Histórico de partidos.
+- Abrir, duplicar, renombrar y borrar partidos.
+- Informe visual.
+- Impresión / Guardar como PDF.
+- JSON para copia de seguridad.
+- Preparada como PWA para instalarla desde Safari/Chrome una vez alojada por HTTPS.
+
+PARA PUBLICARLA
+Sube TODOS los archivos de esta carpeta juntos a un alojamiento estático (por ejemplo GitHub Pages o Netlify).
+El archivo principal debe llamarse index.html.
+
+EN IPAD
+Una vez publicada:
+Safari > abrir la dirección de la app > Compartir > Añadir a pantalla de inicio.
+
+IMPORTANTE
+Los partidos se guardan localmente en el navegador/dispositivo. El JSON sirve como copia de seguridad y para mover un plan entre dispositivos.

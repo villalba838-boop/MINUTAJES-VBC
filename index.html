@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#171a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VBC Minutajes">
+<link rel="manifest" href="manifest.webmanifest">
+<title>VBC Minutajes</title>
+<style>
+:root{
+  --o:#f47721;--o2:#ff9d55;--ink:#171a1e;--ink2:#252a30;--paper:#f3f5f7;
+  --line:#d8dde2;--muted:#707983;--g:#4da66d;--y:#f2c94c;--or:#ed8b2f;--r:#d9534f;--gry:#bbc1c7;--blue:#2e5fa8
+}
+*{box-sizing:border-box}
+body{margin:0;background:#e9edf0;color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input{font:inherit} button{cursor:pointer}
+.app{max-width:1600px;margin:auto;background:#fff;min-height:100vh}
+header{background:linear-gradient(120deg,#12161a,#2b3036);color:#fff;border-bottom:5px solid var(--o);padding:16px 20px}
+.header{display:flex;justify-content:space-between;gap:18px;align-items:center}
+h1{margin:0;font-size:clamp(24px,3vw,42px)} h1 span{color:var(--o2)}
+.sub{color:#d7dbe0;margin-top:4px;font-size:14px}
+.motto{border:1px solid #555e66;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900}
+main{padding:12px}
+.top{display:grid;grid-template-columns:1.1fr .65fr 1.35fr auto;gap:8px;align-items:end;margin-bottom:10px}
+label{display:block;font-size:10px;font-weight:900;color:#59616a;margin-bottom:3px}
+input{width:100%;min-height:38px;border:1px solid #ccd2d8;border-radius:8px;padding:7px 9px;background:#fff;color:var(--ink)}
+.btn{border:0;border-radius:8px;padding:9px 12px;min-height:38px;background:#e7eaed;color:#20252a;font-weight:900}
+.btn.primary{background:var(--o);color:#fff}.btn.dark{background:var(--ink2);color:#fff}.btn.red{background:#a84040;color:#fff}
+.box{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.head{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--ink2);color:#fff;padding:8px 10px}
+.head.orange{background:var(--o)} .head h2,.head h3{font-size:14px;margin:0}
+.roster{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding:8px}
+.rp{display:grid;grid-template-columns:48px 1fr 56px 64px;gap:5px;align-items:center}
+.rp input{min-width:0;padding:6px}.rp .target{border:2px solid #f3b37d;text-align:center;font-weight:950;background:#fff8f1}
+.tip{background:#fff6ed;border:1px solid #f1c693;border-radius:9px;padding:7px 9px;font-size:11px;color:#6e430e;margin:9px 0}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 385px;gap:10px;align-items:start}
+.qs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.q{border:2px solid #30353b;border-radius:10px;overflow:hidden}
+.qh{background:var(--o);color:#fff;padding:7px 9px;display:flex;justify-content:space-between;align-items:center}
+.qh strong{font-size:18px}.qh span{font-size:10px;font-weight:900}
+.start{display:grid;grid-template-columns:74px repeat(5,1fr);border-bottom:2px solid #333}
+.startlabel{background:#ffe0c7;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:950}
+.pick{border:0;border-left:1px solid #c6cbd0;background:#fff;min-height:38px;font-weight:950;color:var(--blue);padding:3px}
+.pick small{display:block;color:#6f7780;font-size:8px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grid{display:grid;grid-template-columns:46px repeat(5,1fr)}
+.c{min-height:34px;border-right:1px solid #d5d9dd;border-bottom:1px solid #d5d9dd;display:flex;align-items:center;justify-content:center}
+.c.m{background:#f0f2f4;font-weight:950}.c.h{background:#e1e5e8;font-size:10px;font-weight:900;min-height:27px}
+.change{width:100%;height:100%;border:0;background:white;color:var(--blue);font-weight:950;padding:2px}.change:hover,.pick:hover{background:#fff5eb}
+.side{position:sticky;top:8px}
+.sumwrap{padding:7px}
+.ps{border:1px solid #dfe3e7;border-left:6px solid var(--gry);border-radius:8px;padding:6px 7px;margin-bottom:5px}
+.ps.grey{border-left-color:var(--gry)}.ps.green{border-left-color:var(--g)}.ps.yellow{border-left-color:var(--y)}.ps.orange{border-left-color:var(--or)}.ps.red{border-left-color:var(--r)}
+.pst{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}
+.pn{font-weight:950;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pm{font-size:20px;font-weight:950}.meta{font-size:9px;color:var(--muted)}
+.diff{font-size:9px;font-weight:900}.diff.ok{color:#2c7b4e}.diff.more{color:#a45616}.diff.less{color:#8b4260}
+.tl{display:grid;grid-template-columns:repeat(40,1fr);gap:1px;margin-top:4px}.tl span{height:6px;background:#e6e9ec}.tl span.on{background:#34393e}.tl span.sep{margin-right:2px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px}.metric{background:#f3f5f7;border-radius:7px;padding:6px;text-align:center}.metric strong{display:block;font-size:16px}.metric span{font-size:8px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;font-size:9px;color:#666;margin-top:6px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:3px}
+.analysis{display:grid;grid-template-columns:1.15fr .85fr;gap:10px;margin-top:10px}
+.pb{padding:9px}.players{display:flex;gap:6px;flex-wrap:wrap}.pill{border:1px solid #cfd4da;background:#fff;border-radius:999px;padding:7px 9px;font-weight:900;font-size:11px}.pill.sel{background:#252a30;color:#fff;border-color:#252a30}
+.combo{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f4f6f7;border-radius:9px;padding:10px;margin-top:8px}.combo .who{font-weight:900;font-size:12px}.combo .val{font-size:30px;font-weight:950;color:var(--o)}
+.top5{display:grid;gap:5px}.qrow{border:1px solid #dde1e5;border-radius:8px;padding:7px}.qrowtop{display:flex;justify-content:space-between;gap:8px}.nums{font-weight:950;font-size:12px}.mins{font-size:19px;font-weight:950;color:var(--o)}.names,.segments{font-size:9px;color:var(--muted);margin-top:2px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.modal{position:fixed;inset:0;background:rgba(15,18,20,.58);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}.modal.open{display:flex}
+.modalcard{width:min(640px,100%);background:#fff;border-radius:12px;overflow:hidden}.modalbody{padding:12px}.modalgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.mp{border:1px solid #d4d9de;background:#fff;border-radius:9px;padding:10px 7px;font-weight:900}.mp small{display:block;color:#68717a;font-size:9px}
+.report{display:none;background:#fff}.report.open{display:block}
+.reportbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:8px 0 12px}
+.report-title{font-size:28px;font-weight:950;margin:0}.report-sub{color:#68717a;font-size:12px}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.report-card{border:1px solid #d8dde2;border-radius:10px;overflow:hidden}.report-card h3{margin:0;background:#252a30;color:#fff;padding:8px 10px;font-size:13px}
+.report-body{padding:9px}.rtable{width:100%;border-collapse:collapse}.rtable th,.rtable td{border:1px solid #d8dde2;padding:5px;text-align:center;font-size:10px}.rtable th{background:#f0f2f4}.rtable td.name{text-align:left;font-weight:800}
+.report-combo{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.rcombo{background:#f5f6f7;border-radius:8px;padding:7px;font-size:10px}
+@media(max-width:1200px){.layout{grid-template-columns:1fr}.side{position:static}.sumwrap{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.ps{margin:0}.metrics,.legend{grid-column:1/-1}}
+@media(max-width:850px){.qs,.analysis,.report-grid{grid-template-columns:1fr}.roster{grid-template-columns:repeat(3,1fr)}.top{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){main{padding:7px}.roster{grid-template-columns:repeat(2,1fr)}.modalgrid{grid-template-columns:repeat(2,1fr)}}
+@media print{
+ body{background:#fff}.app{max-width:none}.planner-view{display:none!important}.report{display:block!important}
+ header,.reportbar .no-print{display:none!important}.report{padding:0}.report-title{font-size:24px}
+ .report-grid{grid-template-columns:1fr 1fr}.report-card{break-inside:avoid}
+ @page{size:A4 landscape;margin:8mm}
+}
+</style>
+
+<style>
+.squad-cards{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+}
+.squad-card{
+  position:relative;
+  border:2px solid #d7dce1;
+  border-radius:12px;
+  background:#f7f8f9;
+  padding:10px;
+  min-width:0;
+  transition:border-color .15s ease,background .15s ease,transform .15s ease;
+}
+.squad-card.active{
+  background:#fff8f2;
+  border-color:var(--o);
+}
+.squad-card.inactive{
+  opacity:.55;
+  background:#f1f2f3;
+}
+.squad-main{
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr);
+  gap:8px;
+  align-items:center;
+  cursor:pointer;
+}
+.squad-number{
+  width:46px;height:46px;border-radius:12px;
+  background:#252a30;color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:950;
+}
+.squad-card.active .squad-number{background:var(--o)}
+.squad-name{
+  font-size:12px;font-weight:950;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.squad-status{
+  margin-top:2px;
+  font-size:9px;font-weight:900;
+  color:#6b737b;
+}
+.squad-bottom{
+  display:grid;
+  grid-template-columns:1fr 68px;
+  gap:7px;
+  align-items:end;
+  margin-top:9px;
+}
+.squad-check{
+  min-height:34px;border:0;border-radius:8px;
+  background:#e4e7ea;color:#4e565e;
+  font-size:10px;font-weight:950;
+}
+.squad-card.active .squad-check{
+  background:#252a30;color:white;
+}
+.squad-min label{
+  font-size:8px;margin-bottom:2px;text-align:center;
+}
+.squad-min input{
+  min-height:34px;
+  text-align:center;
+  font-size:15px;
+  font-weight:950;
+  border:2px solid #f1b27a;
+  background:white;
+}
+.squad-card.inactive .squad-min input{
+  border-color:#d3d7db;
+  background:#eceeef;
+}
+@media(max-width:1200px){.squad-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.squad-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+
+
+<style>
+.home-view{padding:18px 0 8px}
+.home-hero{background:linear-gradient(125deg,#171a1e,#30363c);color:#fff;border-radius:16px;padding:22px;border-bottom:5px solid var(--o);margin-bottom:12px}
+.home-hero h2{margin:0;font-size:28px}.home-hero p{margin:5px 0 0;color:#d9dde1}
+.home-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.home-action{border:1px solid #d8dde2;border-radius:14px;background:#fff;padding:18px;text-align:left;min-height:116px}
+.home-action strong{display:block;font-size:18px}.home-action span{display:block;color:#6d757e;font-size:11px;margin-top:6px}
+.home-action.primary-card{background:#fff7ef;border:2px solid var(--o)}
+.saved-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.saved-card{border:1px solid #d9dee3;border-radius:11px;padding:11px;background:#fff}
+.saved-card h4{margin:0 0 3px;font-size:14px}.saved-card .sm{font-size:10px;color:#737b84}
+.saved-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.saved-actions button{min-height:30px;padding:5px 8px;font-size:9px}
+.appnav{display:flex;gap:6px;align-items:center;margin-bottom:10px}.appnav .spacer{flex:1}
+.autosave{font-size:9px;color:#68717a;font-weight:800}
+.team-editor{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.team-row{display:grid;grid-template-columns:52px 1fr 70px;gap:5px}
+.team-row button{border:0;border-radius:7px;background:#f3e7e7;color:#923f3f;font-size:9px;font-weight:900}
+@media(max-width:850px){.home-actions,.saved-list,.team-editor{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.home-actions,.saved-list,.team-editor{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<div class="app" id="app">
+<header>
+ <div class="header">
+  <div><h1>VALENCIA BASKET <span>LF CHALLENGE</span></h1><div class="sub">Planificación visual de minutajes, rotaciones y combinaciones</div></div>
+  <div class="motto">PREPARAR · VISUALIZAR · DECIDIR</div>
+ </div>
+</header>
+
+<main>
+
+<section class="home-view" id="home">
+ <div class="home-hero">
+  <h2>VBC MINUTAJES</h2>
+  <p>LF Challenge · planificación prepartido de rotaciones, minutos y combinaciones.</p>
+ </div>
+ <div class="home-actions">
+  <button class="home-action primary-card" id="newGame"><strong>+ NUEVO PARTIDO</strong><span>Empieza una planificación limpia con la plantilla del equipo.</span></button>
+  <button class="home-action" id="openGames"><strong>MIS PARTIDOS</strong><span>Abre, duplica, renombra o elimina una planificación anterior.</span></button>
+  <button class="home-action" id="editTeam"><strong>PLANTILLA</strong><span>Edita las jugadoras que estarán disponibles cada fin de semana.</span></button>
+ </div>
+ <div class="box" id="savedBox">
+  <div class="head"><h2>PARTIDOS GUARDADOS</h2><span style="font-size:10px" id="savedCount">0 partidos</span></div>
+  <div class="pb"><div class="saved-list" id="savedList"></div></div>
+ </div>
+ <div class="box" id="teamBox" style="margin-top:10px;display:none">
+  <div class="head orange"><h2>PLANTILLA DEL EQUIPO</h2><div class="actions"><button class="btn" id="addTeamPlayer">+ Añadir</button><button class="btn dark" id="closeTeam">Cerrar</button></div></div>
+  <div class="pb"><div class="team-editor" id="teamEditor"></div></div>
+ </div>
+</section>
+
+<section class="planner-view" id="planner" style="display:none">
+ <div class="appnav">
+  <button class="btn" id="goHome">← Inicio</button>
+  <strong id="currentGameTitle">Nuevo partido</strong>
+  <span class="spacer"></span>
+  <span class="autosave" id="autosaveState">Guardado automático</span>
+ </div>
+
+ <div class="top">
+  <div><label>Rival</label><input id="rival" placeholder="Rival"></div>
+  <div><label>Fecha</label><input id="fecha" type="date"></div>
+  <div><label>Observaciones</label><input id="notes" placeholder="Idea de partido / condicionantes"></div>
+  <div class="actions">
+   <button class="btn dark" id="saveJson">Guardar</button>
+   <label class="btn">Abrir<input id="loadJson" type="file" accept=".json" hidden></label>
+   <button class="btn primary" id="showReport">Informe</button>
+  </div>
+ </div>
+
+ <div class="box">
+  <div class="head"><h2>BASE DE JUGADORAS · DORSALES EDITABLES</h2><div class="actions"><div style="font-size:10px;display:flex;align-items:center">Total marcado: <strong id="targetTotal" style="margin-left:4px">0'</strong></div><button class="btn primary" id="addPlayer">+ AÑADIR JUGADORA</button></div></div>
+  <div class="roster" id="roster"></div>
+ </div>
+
+ <div class="box" style="margin-top:9px">
+  <div class="head orange"><h2>CONVOCATORIA Y MINUTOS PREVISTOS</h2><div style="font-size:10px"><strong id="activeCount">0</strong> seleccionadas · <strong id="activeTargetTotal">0'</strong> marcados</div></div>
+  <div class="pb">
+   <div class="squad-cards" id="selectionCards"></div>
+   <div class="panel-note">Pulsa una tarjeta para convocar o desconvocar. Los minutos se pueden cambiar directamente sin abrir ningún menú.</div>
+  </div>
+ </div>
+
+ <div class="tip"><strong>Forma de trabajar:</strong> marca primero los minutos que quieres para cada jugadora. Luego construye Q1–Q4 como en tu Excel: quinteto inicial y cambios en el minuto correspondiente. El panel derecho te dice al instante cómo queda realmente el reparto.</div>
+
+ <div class="layout">
+  <div class="qs" id="quarters"></div>
+  <aside class="box side">
+   <div class="head orange"><h2>REPARTO CALCULADO</h2><strong id="status"></strong></div>
+   <div class="sumwrap">
+    <div id="summaries"></div>
+    <div class="metrics">
+     <div class="metric"><strong id="teamTotal">0</strong><span>MIN TOTALES</span></div>
+     <div class="metric"><strong id="maxRun">0'</strong><span>MÁX SEGUIDO</span></div>
+     <div class="metric"><strong id="nQuintets">0</strong><span>QUINTETOS</span></div>
+    </div>
+    <div class="legend">
+     <span><i class="dot" style="background:var(--gry)"></i>0–9'</span>
+     <span><i class="dot" style="background:var(--g)"></i>10–17'</span>
+     <span><i class="dot" style="background:var(--y)"></i>18–23'</span>
+     <span><i class="dot" style="background:var(--or)"></i>24–29'</span>
+     <span><i class="dot" style="background:var(--r)"></i>30'+</span>
+    </div>
+   </div>
+  </aside>
+ </div>
+
+ <div class="analysis">
+  <div class="box">
+   <div class="head orange"><h3>COMBINACIONES · 2 A 5 JUGADORAS</h3><button class="btn" id="clearCombo">Limpiar</button></div>
+   <div class="pb">
+    <div class="players" id="comboButtons"></div>
+    <div class="combo"><div class="who" id="comboWho">Selecciona al menos 2 jugadoras</div><div class="val" id="comboVal">—</div></div>
+   </div>
+  </div>
+  <div class="box">
+   <div class="head"><h3>TOP 5 QUINTETOS MÁS UTILIZADOS</h3></div>
+   <div class="pb"><div class="top5" id="top5"></div></div>
+  </div>
+ </div>
+</section>
+
+<section class="report" id="report">
+ <div class="reportbar">
+  <div><h2 class="report-title">VBC MINUTAJES · INFORME PREPARTIDO</h2><div class="report-sub" id="reportMeta"></div></div>
+  <div class="actions no-print"><button class="btn" id="backPlan">Volver al plan</button><button class="btn primary" id="printReport">Imprimir / Guardar PDF</button><button class="btn dark" id="downloadReport">Descargar informe HTML</button></div>
+ </div>
+ <div class="report-grid">
+  <div class="report-card"><h3>REPARTO DE MINUTOS</h3><div class="report-body"><table class="rtable" id="reportMinutes"></table></div></div>
+  <div class="report-card"><h3>LECTURA RÁPIDA</h3><div class="report-body" id="reportQuick"></div></div>
+  <div class="report-card"><h3>TOP 5 QUINTETOS</h3><div class="report-body" id="reportTop5"></div></div>
+  <div class="report-card"><h3>COMBINACIONES DESTACADAS</h3><div class="report-body" id="reportCombos"></div></div>
+  <div class="report-card" style="grid-column:1/-1"><h3>ROTACIONES PLANIFICADAS</h3><div class="report-body" id="reportRotations"></div></div>
+ </div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal">
+ <div class="modalcard">
+  <div class="head"><h3 id="modalTitle">Selecciona jugadora</h3><button class="btn" id="closeModal">Cerrar</button></div>
+  <div class="modalbody"><div class="modalgrid" id="modalGrid"></div><div class="actions" style="justify-content:flex-end;margin-top:9px"><button class="btn red" id="clearChange">✕ Borrar cambio</button></div></div>
+ </div>
+</div>
+
+<script>
+(function(){
+const KEY='vbc_minutajes_current_v1';
+const $=id=>document.getElementById(id);
+function blank(){return{
+ rival:'',fecha:'',notes:'',
+ roster:[
+{number:'1',name:'Isa Hernández',target:0,active:true},
+{number:'2',name:'Carla',target:0,active:true},
+{number:'3',name:'Leyre',target:0,active:true},
+{number:'4',name:'Reynal',target:0,active:true},
+{number:'5',name:'Clara Che',target:0,active:true},
+{number:'6',name:'Isa Martin',target:0,active:true},
+{number:'7',name:'Lorena Segura',target:0,active:true},
+{number:'8',name:'Broncano',target:0,active:true},
+{number:'9',name:'Sandra Dávila',target:0,active:true},
+{number:'10',name:'Amelia Alonso',target:0,active:true},
+{number:'11',name:'Filor',target:0,active:true},
+{number:'12',name:'Nerea',target:0,active:true},
+{number:'13',name:'Thiama',target:0,active:true},
+{number:'14',name:'Sarai',target:0,active:true},
+{number:'15',name:'Cameron',target:0,active:true}
+],
+ quarters:Array.from({length:4},()=>({start:['','','','',''],changes:Array.from({length:10},()=>['','','','',''])})),
+ combo:[]
+}}
+let s=load();
+
+const TEAM_KEY='vbc_minutajes_team_v1';
+const GAMES_KEY='vbc_minutajes_games_v1';
+let currentGameId=null;
+
+function defaultTeam(){
+ return [
+ 'Isa Hernández','Carla','Leyre','Reynal','Clara Che','Isa Martin','Lorena Segura',
+ 'Broncano','Sandra Dávila','Amelia Alonso','Filor','Nerea','Thiama','Sarai','Cameron'
+ ].map((name,i)=>({number:String(i+1),name}));
+}
+function getTeam(){
+ try{const t=JSON.parse(localStorage.getItem(TEAM_KEY));return Array.isArray(t)&&t.length?t:defaultTeam()}catch(e){return defaultTeam()}
+}
+function saveTeam(t){localStorage.setItem(TEAM_KEY,JSON.stringify(t))}
+function getGames(){try{return JSON.parse(localStorage.getItem(GAMES_KEY))||[]}catch(e){return[]}}
+function saveGames(g){localStorage.setItem(GAMES_KEY,JSON.stringify(g))}
+function freshFromTeam(){
+ const x=blank(),team=getTeam();
+ x.roster=team.map(p=>({number:p.number,name:p.name,target:0,active:true}));
+ return x
+}
+function gameName(g){return (g.rival&&g.rival.trim())?`vs ${g.rival.trim()}`:'Partido sin rival'}
+function persistCurrent(){
+ if(!currentGameId)return;
+ const games=getGames(),idx=games.findIndex(g=>g.id===currentGameId);
+ const item={id:currentGameId,updatedAt:new Date().toISOString(),data:JSON.parse(JSON.stringify(s))};
+ if(idx>=0)games[idx]=item;else games.unshift(item);
+ saveGames(games);
+ const a=$('autosaveState');if(a){a.textContent='✓ Guardado';setTimeout(()=>a.textContent='Guardado automático',900)}
+ renderSavedGames();
+}
+function showHome(){
+ persistCurrent();currentGameId=null;
+ $('planner').style.display='none';$('report').classList.remove('open');$('home').style.display='block';
+ renderSavedGames();window.scrollTo(0,0)
+}
+function openPlanner(){
+ $('home').style.display='none';$('report').classList.remove('open');$('planner').style.display='block';
+ $('currentGameTitle').textContent=gameName(s);render();window.scrollTo(0,0)
+}
+function newGame(){
+ s=freshFromTeam();currentGameId='game_'+Date.now();save();persistCurrent();openPlanner()
+}
+function openGame(id){
+ const item=getGames().find(g=>g.id===id);if(!item)return;
+ currentGameId=id;s=JSON.parse(JSON.stringify(item.data));save();openPlanner()
+}
+function duplicateGame(id){
+ const item=getGames().find(g=>g.id===id);if(!item)return;
+ const copy=JSON.parse(JSON.stringify(item.data));copy.rival=(copy.rival||'')+' (copia)';
+ const nid='game_'+Date.now(),games=getGames();games.unshift({id:nid,updatedAt:new Date().toISOString(),data:copy});saveGames(games);renderSavedGames()
+}
+function deleteGame(id){
+ if(!confirm('¿Eliminar este partido guardado?'))return;
+ saveGames(getGames().filter(g=>g.id!==id));renderSavedGames()
+}
+function renameGame(id){
+ const games=getGames(),item=games.find(g=>g.id===id);if(!item)return;
+ const v=prompt('Nuevo rival / nombre del partido:',item.data.rival||'');
+ if(v===null)return;item.data.rival=v;item.updatedAt=new Date().toISOString();saveGames(games);renderSavedGames()
+}
+function renderSavedGames(){
+ const games=getGames(),h=$('savedList');if(!h)return;
+ $('savedCount').textContent=`${games.length} ${games.length===1?'partido':'partidos'}`;
+ h.innerHTML='';
+ if(!games.length){h.innerHTML='<div class="meta">Todavía no hay partidos guardados. Pulsa NUEVO PARTIDO.</div>';return}
+ games.sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))).forEach(g=>{
+  const d=document.createElement('div');d.className='saved-card';
+  const date=g.data.fecha||new Date(g.updatedAt).toLocaleDateString('es-ES');
+  d.innerHTML=`<h4>${esc(gameName(g.data))}</h4><div class="sm">${esc(date)} · ${esc(g.data.notes||'Sin notas')}</div>
+  <div class="saved-actions"><button class="btn primary" data-open="${g.id}">Abrir</button><button class="btn" data-dup="${g.id}">Duplicar</button><button class="btn" data-ren="${g.id}">Renombrar</button><button class="btn red" data-del="${g.id}">Borrar</button></div>`;
+  h.appendChild(d)
+ });
+ h.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openGame(x.dataset.open));
+ h.querySelectorAll('[data-dup]').forEach(x=>x.onclick=()=>duplicateGame(x.dataset.dup));
+ h.querySelectorAll('[data-ren]').forEach(x=>x.onclick=()=>renameGame(x.dataset.ren));
+ h.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>deleteGame(x.dataset.del))
+}
+function renderTeamEditor(){
+ const team=getTeam(),h=$('teamEditor');h.innerHTML='';
+ team.forEach((p,i)=>{
+  const d=document.createElement('div');d.className='team-row';
+  d.innerHTML=`<input data-tn="${i}" value="${esc(p.number)}"><input data-tname="${i}" value="${esc(p.name)}"><button data-tdel="${i}">Eliminar</button>`;h.appendChild(d)
+ });
+ h.querySelectorAll('[data-tn]').forEach(x=>x.onchange=()=>{const t=getTeam();t[+x.dataset.tn].number=x.value.trim();saveTeam(t);renderTeamEditor()});
+ h.querySelectorAll('[data-tname]').forEach(x=>x.onchange=()=>{const t=getTeam();t[+x.dataset.tname].name=x.value.trim();saveTeam(t);renderTeamEditor()});
+ h.querySelectorAll('[data-tdel]').forEach(x=>x.onclick=()=>{const t=getTeam();t.splice(+x.dataset.tdel,1);saveTeam(t);renderTeamEditor()})
+}
+
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x&&x.roster&&x.quarters?x:blank()}catch(e){return blank()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(s));if(currentGameId)persistCurrent()}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function valid(){return s.roster.filter(p=>p.active!==false&&p.number.trim()&&p.name.trim())}
+function gp(id){return s.roster.find(p=>p.number===id)}
+function lab(id){const p=gp(id);return p?`${p.number} · ${p.name}`:id||'—'}
+function lc(m){return m>=30?'red':m>=24?'orange':m>=18?'yellow':m>=10?'green':'grey'}
+function toast(msg){alert(msg)}
+
+function renderRoster(){
+ const h=$('roster');h.innerHTML='';
+ s.roster.forEach((p,i)=>{
+  if(p.target==null)p.target=0;
+  const d=document.createElement('div');d.className='rp';
+  if(p.active==null)p.active=true;d.innerHTML=`<input data-num="${i}" aria-label="Dorsal" value="${esc(p.number)}"><input data-name="${i}" aria-label="Nombre" value="${esc(p.name)}"><input data-target="${i}" class="target" aria-label="Minutos deseados" type="number" min="0" max="40" step="1" value="${Number(p.target)||0}" title="Minutos deseados"><button type="button" class="remove-player" data-remove="${i}" title="Eliminar jugadora">Eliminar</button>`;
+  h.appendChild(d)
+ });
+ h.querySelectorAll('[data-num]').forEach(x=>x.addEventListener('change',()=>{
+  const i=+x.dataset.num,old=s.roster[i].number,v=x.value.trim();
+  if(v&&s.roster.some((p,j)=>j!==i&&p.number===v)){toast('Ese dorsal ya está utilizado');x.value=old;return}
+  s.roster[i].number=v;
+  if(old!==v){s.quarters.forEach(q=>{q.start=q.start.map(z=>z===old?v:z);q.changes=q.changes.map(r=>r.map(z=>z===old?v:z))});s.combo=s.combo.map(z=>z===old?v:z)}
+  save();render()
+ }));
+ h.querySelectorAll('[data-name]').forEach(x=>x.addEventListener('input',()=>{s.roster[+x.dataset.name].name=x.value;save();renderAnalysis()}));
+ h.querySelectorAll('[data-target]').forEach(x=>x.addEventListener('input',()=>{
+  let v=parseInt(x.value||0,10);if(!Number.isFinite(v))v=0;v=Math.max(0,Math.min(40,v));s.roster[+x.dataset.target].target=v;save();renderSummary()
+ }));
+ h.querySelectorAll('[data-remove]').forEach(x=>x.addEventListener('click',()=>{
+  const i=+x.dataset.remove;
+  if(!confirm(`¿Eliminar a ${s.roster[i].name}?`))return;
+  const old=s.roster[i].number;
+  s.roster.splice(i,1);
+  s.quarters.forEach(q=>{q.start=q.start.map(z=>z===old?'':z);q.changes=q.changes.map(r=>r.map(z=>z===old?'':z))});
+  s.combo=s.combo.filter(z=>z!==old);
+  save();render()
+ }));
+ $('targetTotal').textContent=s.roster.filter(p=>p.active!==false).reduce((a,p)=>a+(Number(p.target)||0),0)+"'";
+ renderSelectionTable();
+}
+
+
+function renderSelectionTable(){
+ const host=$('selectionCards');
+ host.innerHTML='';
+ let activeCount=0,activeTotal=0;
+ s.roster.forEach((p,i)=>{
+   if(p.active==null)p.active=true;
+   if(p.active!==false){activeCount++;activeTotal+=Number(p.target)||0}
+   const card=document.createElement('div');
+   card.className='squad-card '+(p.active!==false?'active':'inactive');
+   card.innerHTML=`
+     <div class="squad-main" data-toggle="${i}">
+       <div class="squad-number">#${esc(p.number)}</div>
+       <div>
+         <div class="squad-name">${esc(p.name)}</div>
+         <div class="squad-status">${p.active!==false?'✓ CONVOCADA':'NO CONVOCADA'}</div>
+       </div>
+     </div>
+     <div class="squad-bottom">
+       <button type="button" class="squad-check" data-check="${i}">${p.active!==false?'✓ En partido':'+ Convocar'}</button>
+       <div class="squad-min"><label>MINUTOS</label><input type="number" min="0" max="40" step="1" data-starget="${i}" value="${Number(p.target)||0}"></div>
+     </div>`;
+   host.appendChild(card);
+ });
+ $('activeCount').textContent=activeCount;
+ $('activeTargetTotal').textContent=activeTotal+"'";
+
+ function toggle(i){
+   s.roster[i].active=s.roster[i].active===false?true:false;
+   if(s.roster[i].active===false){
+     const id=s.roster[i].number;
+     s.quarters.forEach(q=>{q.start=q.start.map(z=>z===id?'':z);q.changes=q.changes.map(r=>r.map(z=>z===id?'':z))});
+     s.combo=s.combo.filter(z=>z!==id);
+   }
+   save();render();
+ }
+ host.querySelectorAll('[data-toggle]').forEach(x=>x.addEventListener('click',()=>toggle(+x.dataset.toggle)));
+ host.querySelectorAll('[data-check]').forEach(x=>x.addEventListener('click',e=>{e.stopPropagation();toggle(+x.dataset.check)}));
+ host.querySelectorAll('[data-starget]').forEach(x=>x.addEventListener('click',e=>e.stopPropagation()));
+ host.querySelectorAll('[data-starget]').forEach(x=>x.addEventListener('input',()=>{
+   const i=+x.dataset.starget;let v=parseInt(x.value||0,10);if(!Number.isFinite(v))v=0;v=Math.max(0,Math.min(40,v));
+   s.roster[i].target=v;save();renderSummary();
+   $('targetTotal').textContent=s.roster.filter(p=>p.active!==false).reduce((a,p)=>a+(Number(p.target)||0),0)+"'";
+   $('activeTargetTotal').textContent=s.roster.filter(p=>p.active!==false).reduce((a,p)=>a+(Number(p.target)||0),0)+"'";
+ }));
+}
+
+let ctx=null;
+function openPicker(c){
+ ctx=c;$('modalTitle').textContent=c.type==='start'?`Q${c.q+1} · Quinteto inicial · puesto ${c.c+1}`:`Q${c.q+1} · Minuto ${9-c.r} · entra en puesto ${c.c+1}`;
+ const g=$('modalGrid');g.innerHTML='';
+ valid().forEach(p=>{
+  const b=document.createElement('button');b.type='button';b.className='mp';
+  b.innerHTML=`#${esc(p.number)}<small>${esc(p.name)}</small>`;
+  b.addEventListener('click',()=>{if(c.type==='start')s.quarters[c.q].start[c.c]=p.number;else s.quarters[c.q].changes[c.r][c.c]=p.number;save();closePicker();render()});
+  g.appendChild(b)
+ });
+ $('clearChange').style.display=c.type==='change'?'inline-block':'none';
+ $('modal').classList.add('open')
+}
+function closePicker(){$('modal').classList.remove('open')}
+
+function renderQuarters(){
+ const h=$('quarters');h.innerHTML='';
+ s.quarters.forEach((q,qi)=>{
+  const sec=document.createElement('section');sec.className='q';
+  sec.innerHTML=`<div class="qh"><strong>Q${qi+1}</strong><span>QUINTETO INICIAL + CAMBIOS</span></div>`;
+  const sr=document.createElement('div');sr.className='start';sr.innerHTML='<div class="startlabel">INICIO</div>';
+  q.start.forEach((id,c)=>{
+   const b=document.createElement('button');b.type='button';b.className='pick';
+   b.innerHTML=id?`#${esc(id)}<small>${esc(gp(id)?.name||'')}</small>`:'—';
+   b.addEventListener('click',()=>openPicker({type:'start',q:qi,c}));sr.appendChild(b)
+  });sec.appendChild(sr);
+  const grid=document.createElement('div');grid.className='grid';
+  grid.innerHTML='<div class="c h">MIN</div>'+[1,2,3,4,5].map(n=>`<div class="c h">P${n}</div>`).join('');
+  for(let min=9;min>=0;min--){
+   const r=9-min;const mc=document.createElement('div');mc.className='c m';mc.textContent=min;grid.appendChild(mc);
+   for(let c=0;c<5;c++){
+    const cell=document.createElement('div');cell.className='c';
+    const b=document.createElement('button');b.type='button';b.className='change';const id=q.changes[r][c];
+    b.innerHTML=id?`#${esc(id)}<small>${esc(gp(id)?.name||'')}</small>`:'';
+    b.addEventListener('click',()=>openPicker({type:'change',q:qi,r,c}));cell.appendChild(b);grid.appendChild(cell)
+   }
+  }
+  sec.appendChild(grid);h.appendChild(sec)
+ })
+}
+
+function plan(){
+ const snaps=[],errors=[];
+ s.quarters.forEach((q,qi)=>{
+  let lineup=[...q.start];
+  if(lineup.filter(Boolean).length!==5)errors.push(`Q${qi+1}: quinteto inicial incompleto`);
+  if(lineup.filter(Boolean).length===5&&new Set(lineup).size!==5)errors.push(`Q${qi+1}: jugadora repetida en el quinteto inicial`);
+  for(let min=10;min>0;min--){
+   snaps.push({q:qi,from:min,to:min-1,lineup:[...lineup]});
+   const next=min-1,r=9-next;
+   if(next>=0&&next<=9){
+    for(let c=0;c<5;c++){const inc=q.changes[r][c];if(inc)lineup[c]=inc}
+    const filled=lineup.filter(Boolean);
+    if(filled.length===5&&new Set(filled).size!==5)errors.push(`Q${qi+1}, minuto ${next}: jugadora duplicada`)
+   }
+  }
+ });
+ return{snaps,errors}
+}
+function metrics(snaps){
+ const ids=valid().map(p=>p.number),tot={},max={},cur={},tl={};
+ ids.forEach(id=>{tot[id]=0;max[id]=0;cur[id]=0;tl[id]=[]});
+ snaps.forEach(x=>ids.forEach(id=>{const on=x.lineup.includes(id);tl[id].push(on);if(on){tot[id]++;cur[id]++;max[id]=Math.max(max[id],cur[id])}else cur[id]=0}));
+ return{tot,max,tl}
+}
+function quintets(snaps){
+ const map=new Map();
+ snaps.forEach((x,idx)=>{
+  if(x.lineup.filter(Boolean).length!==5||new Set(x.lineup).size!==5)return;
+  const ids=[...x.lineup].sort((a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true})),key=ids.join('|');
+  if(!map.has(key))map.set(key,{ids,minutes:0,segments:0,last:-2});
+  const o=map.get(key);o.minutes++;if(o.last!==idx-1)o.segments++;o.last=idx
+ });
+ return[...map.values()].sort((a,b)=>b.minutes-a.minutes||b.segments-a.segments)
+}
+function comboM(snaps,ids){return ids.length<2?0:snaps.filter(x=>ids.every(id=>x.lineup.includes(id))).length}
+
+function renderSummary(){
+ const {snaps,errors}=plan(),m=metrics(snaps),h=$('summaries');h.innerHTML='';
+ valid().forEach(p=>{
+  const mins=m.tot[p.number]||0,t=Number(p.target)||0,d=mins-t;
+  const el=document.createElement('div');el.className='ps '+lc(mins);
+  const dt=!t?'Sin minutaje marcado':d===0?'Cuadra con lo marcado':`${d>0?'+':''}${d}' vs marcado`;
+  const dc=!t?'':d===0?'ok':d>0?'more':'less';
+  el.innerHTML=`<div class="pst"><div><div class="pn">#${esc(p.number)} ${esc(p.name)}</div><div class="meta">Marcado ${t}' · Máx seguido ${m.max[p.number]||0}'</div><div class="diff ${dc}">${dt}</div></div><div class="pm">${mins}'</div></div><div class="tl">${(m.tl[p.number]||[]).map((on,i)=>`<span class="${on?'on ':''}${[9,19,29,39].includes(i)?'sep':''}"></span>`).join('')}</div>`;
+  el.addEventListener('click',()=>{if(s.combo.includes(p.number))s.combo=s.combo.filter(z=>z!==p.number);else if(s.combo.length<5)s.combo.push(p.number);save();renderAnalysis()});
+  h.appendChild(el)
+ });
+ const total=Object.values(m.tot).reduce((a,b)=>a+b,0),qs=quintets(snaps);
+ $('teamTotal').textContent=total;$('maxRun').textContent=Math.max(0,...Object.values(m.max))+"'";$('nQuintets').textContent=qs.length;
+ $('status').textContent=errors.length?'REVISAR':'PLAN OK';$('status').style.color=errors.length?'#ffd1d1':'#d8ffe7';$('status').title=errors.join('\n');
+ h.querySelectorAll('[data-remove]').forEach(x=>x.addEventListener('click',()=>{
+  const i=+x.dataset.remove;
+  if(!confirm(`¿Eliminar a ${s.roster[i].name}?`))return;
+  const old=s.roster[i].number;
+  s.roster.splice(i,1);
+  s.quarters.forEach(q=>{q.start=q.start.map(z=>z===old?'':z);q.changes=q.changes.map(r=>r.map(z=>z===old?'':z))});
+  s.combo=s.combo.filter(z=>z!==old);
+  save();render()
+ }));
+ $('targetTotal').textContent=s.roster.filter(p=>p.active!==false).reduce((a,p)=>a+(Number(p.target)||0),0)+"'";
+ renderSelectionTable();
+}
+function renderAnalysis(){
+ const {snaps}=plan(),b=$('comboButtons');b.innerHTML='';
+ valid().forEach(p=>{
+  const x=document.createElement('button');x.type='button';x.className='pill'+(s.combo.includes(p.number)?' sel':'');x.textContent=`#${p.number} ${p.name}`;
+  x.addEventListener('click',()=>{if(s.combo.includes(p.number))s.combo=s.combo.filter(z=>z!==p.number);else if(s.combo.length<5)s.combo.push(p.number);else{toast('Máximo 5 jugadoras');return}save();renderAnalysis()});b.appendChild(x)
+ });
+ $('comboWho').textContent=s.combo.length>=2?s.combo.map(lab).join(' + '):'Selecciona al menos 2 jugadoras';
+ $('comboVal').textContent=s.combo.length>=2?comboM(snaps,s.combo)+"'":'—';
+ const top=quintets(snaps).slice(0,5),h=$('top5');h.innerHTML='';
+ if(!top.length)h.innerHTML='<div class="meta">Completa la planificación para ver quintetos.</div>';
+ top.forEach((q,i)=>{const d=document.createElement('div');d.className='qrow';d.innerHTML=`<div class="qrowtop"><div class="nums">${i+1}. ${q.ids.map(x=>'#'+esc(x)).join(' · ')}</div><div class="mins">${q.minutes}'</div></div><div class="names">${esc(q.ids.map(x=>gp(x)?.name||x).join(' · '))}</div><div class="segments">${q.segments} ${q.segments===1?'tramo':'tramos'}</div>`;h.appendChild(d)})
+}
+
+function allPairs(snaps){
+ const ps=valid(),out=[];
+ for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){const m=comboM(snaps,[ps[i].number,ps[j].number]);out.push({ids:[ps[i].number,ps[j].number],m})}
+ return out.sort((a,b)=>b.m-a.m)
+}
+function rotationRows(){
+ const rows=[];
+ s.quarters.forEach((q,qi)=>{
+  q.changes.forEach((r,ri)=>r.forEach((inc,c)=>{
+   if(inc)rows.push({q:qi+1,min:9-ri,pos:c+1,in:inc})
+  }))
+ });
+ return rows
+}
+function buildReport(){
+ const {snaps,errors}=plan(),m=metrics(snaps),qs=quintets(snaps).slice(0,5),pairs=allPairs(snaps).slice(0,10),rots=rotationRows();
+ $('reportMeta').textContent=[s.rival?`Rival: ${s.rival}`:'',s.fecha?`Fecha: ${s.fecha}`:'',s.notes?`Notas: ${s.notes}`:''].filter(Boolean).join(' · ');
+ let t='<tr><th>#</th><th>Jugadora</th><th>Marcado</th><th>Calculado</th><th>Diferencia</th><th>Máx seguido</th></tr>';
+ valid().forEach(p=>{const a=Number(p.target)||0,b=m.tot[p.number]||0,d=b-a;t+=`<tr><td>${esc(p.number)}</td><td class="name">${esc(p.name)}</td><td>${a}'</td><td><strong>${b}'</strong></td><td>${a?(d>0?'+':'')+d+"'":'—'}</td><td>${m.max[p.number]||0}'</td></tr>`});
+ $('reportMinutes').innerHTML=t;
+ const vals=valid().map(p=>({p,min:m.tot[p.number]||0,max:m.max[p.number]||0}));
+ const most=[...vals].sort((a,b)=>b.min-a.min)[0],least=[...vals].sort((a,b)=>a.min-b.min)[0],long=[...vals].sort((a,b)=>b.max-a.max)[0];
+ $('reportQuick').innerHTML=`<div class="report-combo">
+ <div class="rcombo"><strong>Total equipo</strong><br>${Object.values(m.tot).reduce((a,b)=>a+b,0)}' / 200'</div>
+ <div class="rcombo"><strong>Estado</strong><br>${errors.length?'Revisar plan':'Plan correcto'}</div>
+ <div class="rcombo"><strong>Más minutos</strong><br>${most?esc(most.p.name)+' · '+most.min+"'":'—'}</div>
+ <div class="rcombo"><strong>Menos minutos</strong><br>${least?esc(least.p.name)+' · '+least.min+"'":'—'}</div>
+ <div class="rcombo"><strong>Tramo seguido más largo</strong><br>${long?esc(long.p.name)+' · '+long.max+"'":'—'}</div>
+ <div class="rcombo"><strong>Quintetos distintos</strong><br>${quintets(snaps).length}</div></div>`;
+ $('reportTop5').innerHTML=qs.length?qs.map((q,i)=>`<div class="qrow"><div class="qrowtop"><div class="nums">${i+1}. ${q.ids.map(x=>'#'+esc(x)).join(' · ')}</div><div class="mins">${q.minutes}'</div></div><div class="names">${esc(q.ids.map(x=>gp(x)?.name||x).join(' · '))}</div><div class="segments">${q.segments} ${q.segments===1?'tramo':'tramos'}</div></div>`).join(''):'Sin datos';
+ $('reportCombos').innerHTML=pairs.length?'<div class="report-combo">'+pairs.map(x=>`<div class="rcombo"><strong>${esc(x.ids.map(lab).join(' + '))}</strong><br>${x.m}' juntas</div>`).join('')+'</div>':'Sin datos';
+ if(!rots.length){$('reportRotations').innerHTML='No hay cambios programados.'}else{
+  let rr='<table class="rtable"><tr><th>Cuarto</th><th>Minuto</th><th>Puesto</th><th>Entra</th></tr>';
+  rots.forEach(x=>rr+=`<tr><td>Q${x.q}</td><td>${x.min}'</td><td>P${x.pos}</td><td class="name">${esc(lab(x.in))}</td></tr>`);rr+='</table>';$('reportRotations').innerHTML=rr
+ }
+}
+function render(){
+ s.roster.forEach(p=>{if(p.target==null)p.target=0;if(p.active==null)p.active=true});$('rival').value=s.rival||'';$('fecha').value=s.fecha||'';$('notes').value=s.notes||'';
+ renderRoster();renderQuarters();renderSummary();renderAnalysis()
+}
+$('rival').addEventListener('input',e=>{s.rival=e.target.value;$('currentGameTitle').textContent=gameName(s);save()});$('fecha').addEventListener('change',e=>{s.fecha=e.target.value;save()});$('notes').addEventListener('input',e=>{s.notes=e.target.value;save()});
+$('closeModal').addEventListener('click',closePicker);$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closePicker()});
+$('clearChange').addEventListener('click',()=>{if(ctx&&ctx.type==='change'){s.quarters[ctx.q].changes[ctx.r][ctx.c]='';save();closePicker();render()}});
+$('clearCombo').addEventListener('click',()=>{s.combo=[];save();renderAnalysis()});
+
+$('addPlayer').addEventListener('click',()=>{
+ let next=1;
+ const used=new Set(s.roster.map(p=>String(p.number)));
+ while(used.has(String(next)))next++;
+ s.roster.push({number:String(next),name:'Nueva jugadora',target:0,active:true});
+ save();render();
+});
+
+$('saveJson').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`VBC_${(s.rival||'plan').replace(/\s+/g,'_')}.json`;a.click();URL.revokeObjectURL(a.href)});
+$('loadJson').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.roster||!x.quarters)throw Error();s=x;save();render()}catch(err){toast('Archivo no válido')}e.target.value=''});
+$('showReport').addEventListener('click',()=>{buildReport();$('planner').style.display='none';$('report').classList.add('open');window.scrollTo(0,0)});
+$('backPlan').addEventListener('click',()=>{$('report').classList.remove('open');$('planner').style.display='block';window.scrollTo(0,0)});
+$('printReport').addEventListener('click',()=>{buildReport();window.print()});
+$('downloadReport').addEventListener('click',()=>{
+ buildReport();
+ const reportHtml=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe VBC</title><style>${document.querySelector('style').textContent}</style>
+<style>
+.squad-cards{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+}
+.squad-card{
+  position:relative;
+  border:2px solid #d7dce1;
+  border-radius:12px;
+  background:#f7f8f9;
+  padding:10px;
+  min-width:0;
+  transition:border-color .15s ease,background .15s ease,transform .15s ease;
+}
+.squad-card.active{
+  background:#fff8f2;
+  border-color:var(--o);
+}
+.squad-card.inactive{
+  opacity:.55;
+  background:#f1f2f3;
+}
+.squad-main{
+  display:grid;
+  grid-template-columns:46px minmax(0,1fr);
+  gap:8px;
+  align-items:center;
+  cursor:pointer;
+}
+.squad-number{
+  width:46px;height:46px;border-radius:12px;
+  background:#252a30;color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:950;
+}
+.squad-card.active .squad-number{background:var(--o)}
+.squad-name{
+  font-size:12px;font-weight:950;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.squad-status{
+  margin-top:2px;
+  font-size:9px;font-weight:900;
+  color:#6b737b;
+}
+.squad-bottom{
+  display:grid;
+  grid-template-columns:1fr 68px;
+  gap:7px;
+  align-items:end;
+  margin-top:9px;
+}
+.squad-check{
+  min-height:34px;border:0;border-radius:8px;
+  background:#e4e7ea;color:#4e565e;
+  font-size:10px;font-weight:950;
+}
+.squad-card.active .squad-check{
+  background:#252a30;color:white;
+}
+.squad-min label{
+  font-size:8px;margin-bottom:2px;text-align:center;
+}
+.squad-min input{
+  min-height:34px;
+  text-align:center;
+  font-size:15px;
+  font-weight:950;
+  border:2px solid #f1b27a;
+  background:white;
+}
+.squad-card.inactive .squad-min input{
+  border-color:#d3d7db;
+  background:#eceeef;
+}
+@media(max-width:1200px){.squad-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.squad-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+
+
+<style>
+.home-view{padding:18px 0 8px}
+.home-hero{background:linear-gradient(125deg,#171a1e,#30363c);color:#fff;border-radius:16px;padding:22px;border-bottom:5px solid var(--o);margin-bottom:12px}
+.home-hero h2{margin:0;font-size:28px}.home-hero p{margin:5px 0 0;color:#d9dde1}
+.home-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.home-action{border:1px solid #d8dde2;border-radius:14px;background:#fff;padding:18px;text-align:left;min-height:116px}
+.home-action strong{display:block;font-size:18px}.home-action span{display:block;color:#6d757e;font-size:11px;margin-top:6px}
+.home-action.primary-card{background:#fff7ef;border:2px solid var(--o)}
+.saved-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.saved-card{border:1px solid #d9dee3;border-radius:11px;padding:11px;background:#fff}
+.saved-card h4{margin:0 0 3px;font-size:14px}.saved-card .sm{font-size:10px;color:#737b84}
+.saved-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.saved-actions button{min-height:30px;padding:5px 8px;font-size:9px}
+.appnav{display:flex;gap:6px;align-items:center;margin-bottom:10px}.appnav .spacer{flex:1}
+.autosave{font-size:9px;color:#68717a;font-weight:800}
+.team-editor{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.team-row{display:grid;grid-template-columns:52px 1fr 70px;gap:5px}
+.team-row button{border:0;border-radius:7px;background:#f3e7e7;color:#923f3f;font-size:9px;font-weight:900}
+@media(max-width:850px){.home-actions,.saved-list,.team-editor{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.home-actions,.saved-list,.team-editor{grid-template-columns:1fr}}
+</style>
+
+</head><body><div class="app"><main><section class="report open">${$('report').innerHTML.replace(/<div class="actions no-print">[\s\S]*?<\/div><\/div>/,'</div>')}</section></main></div></body></html>`;
+ const blob=new Blob([reportHtml],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Informe_VBC_${(s.rival||'partido').replace(/\s+/g,'_')}.html`;a.click();URL.revokeObjectURL(a.href)
+});
+
+$('newGame').addEventListener('click',newGame);
+$('openGames').addEventListener('click',()=>{$('savedBox').scrollIntoView({behavior:'smooth'})});
+$('editTeam').addEventListener('click',()=>{$('teamBox').style.display='block';renderTeamEditor();$('teamBox').scrollIntoView({behavior:'smooth'})});
+$('closeTeam').addEventListener('click',()=>{$('teamBox').style.display='none'});
+$('addTeamPlayer').addEventListener('click',()=>{
+ const t=getTeam();let n=1,used=new Set(t.map(p=>String(p.number)));while(used.has(String(n)))n++;
+ t.push({number:String(n),name:'Nueva jugadora'});saveTeam(t);renderTeamEditor()
+});
+$('goHome').addEventListener('click',showHome);
+
+// Seed the persistent team once with the requested squad.
+if(!localStorage.getItem(TEAM_KEY))saveTeam(defaultTeam());
+renderSavedGames();
+$('home').style.display='block';
+$('planner').style.display='none';
+
+// PWA service worker registration (works once hosted over HTTPS).
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}))}
+
+render()
+})();
+</script>
+</body>
+</html>
+<style>.remove-player{border:0;background:#f3e7e7;color:#9a3f3f;border-radius:7px;min-height:34px;font-weight:900;padding:0 6px;font-size:9px}.remove-player:hover{background:#efd6d6}.roster-table-wrap{overflow:auto}.roster-table{width:100%;border-collapse:collapse}.roster-table th,.roster-table td{border:1px solid #d8dde2;padding:6px 7px;font-size:10px}.roster-table th{background:#f0f2f4}.roster-table td.name{text-align:left;font-weight:800}.chosen{background:#fff6ed}.panel-note{font-size:10px;color:#6f7780;margin:6px 0 0}</style>
