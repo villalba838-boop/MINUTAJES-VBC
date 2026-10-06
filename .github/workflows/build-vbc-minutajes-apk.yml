@@ -35,11 +35,10 @@ jobs:
 
       - name: Create Android project
         shell: bash
-        run: |
-          mkdir -p app/src/main/java/com/marcelvillalba/vbcminutajes
+        run: |          mkdir -p app/src/main/java/com/marcelvillalba/vbcminutajes
+          mkdir -p app/src/main/res/values
           mkdir -p app/src/main/res/drawable
-curl -fsSL https://raw.githubusercontent.com/villalba838-boop/MINUTAJES-VBC/main/VBC_Minutajes_icon_512.png -o app/src/main/res/drawable/app_icon.png
-
+          curl -fsSL https://raw.githubusercontent.com/villalba838-boop/MINUTAJES-VBC/main/VBC_Minutajes_icon_512.png -o app/src/main/res/drawable/app_icon.png
           cat > settings.gradle <<'EOF'
           pluginManagement {
               repositories {
