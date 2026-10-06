@@ -32,10 +32,11 @@ jobs:
         run: |
           yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses >/dev/null || true
           /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0"
-
+      
       - name: Create Android project
         shell: bash
-        run: |          mkdir -p app/src/main/java/com/marcelvillalba/vbcminutajes
+        run: |
+          mkdir -p app/src/main/java/com/marcelvillalba/vbcminutajes
           mkdir -p app/src/main/res/values
           mkdir -p app/src/main/res/drawable
           curl -fsSL https://raw.githubusercontent.com/villalba838-boop/MINUTAJES-VBC/main/VBC_Minutajes_icon_512.png -o app/src/main/res/drawable/app_icon.png
