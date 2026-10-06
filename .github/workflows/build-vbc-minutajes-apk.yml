@@ -1,7 +1,11 @@
-name: Build VBC Minutajes APK CORRECTO
+name: Build VBC Minutajes APK
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-vbc-minutajes-apk.yml"
 
 permissions:
   contents: read
@@ -32,11 +36,214 @@ jobs:
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Create VBC Minutajes Android project
+      - name: Create Android project
         shell: bash
         run: |
-          python3 - <<'PY'
-          import base64, json
-          from pathlib import Path
+          mkdir -p app/src/main/java/com/marcelvillalba/vbcminutajes
+          mkdir -p app/src/main/res/values
 
-          payload = json.loads(r"""{"settings.gradle":"cGx1Z2luTWFuYWdlbWVudCB7CiAgICByZXBvc2l0b3JpZXMgewogICAgICAgIGdvb2dsZSgpCiAgICAgICAgbWF2ZW5DZW50cmFsKCkKICAgICAgICBncmFkbGVQbHVnaW5Qb3J0YWwoKQogICAgfQp9CgpkZXBlbmRlbmN5UmVzb2x1dGlvbk1hbmFnZW1lbnQgewogICAgcmVwb3NpdG9yaWVzTW9kZS5zZXQoUmVwb3NpdG9yaWVzTW9kZS5GQUlMX09OX1BST0pFQ1RfUkVQT1MpCiAgICByZXBvc2l0b3JpZXMgewogICAgICAgIGdvb2dsZSgpCiAgICAgICAgbWF2ZW5DZW50cmFsKCkKICAgIH0KfQoKcm9vdFByb2plY3QubmFtZSA9ICJWQkNNaW51dGFqZXMiCmluY2x1ZGUoIjphcHAiKQo=","build.gradle":"cGx1Z2lucyB7CiAgICBpZCAnY29tLmFuZHJvaWQuYXBwbGljYXRpb24nIHZlcnNpb24gJzguNy4zJyBhcHBseSBmYWxzZQp9Cg==","gradle.properties":"b3JnLmdyYWRsZS5qdm1hcmdzPS1YbXgyMDQ4bSAtRGZpbGUuZW5jb2Rpbmc9VVRGLTgKYW5kcm9pZC51c2VBbmRyb2lkWD10cnVlCmFuZHJvaWQubm9uVHJhbnNpdGl2ZVJDbGFzcz10cnVlCg==","app/build.gradle":"cGx1Z2lucyB7CiAgICBpZCAnY29tLmFuZHJvaWQuYXBwbGljYXRpb24nCn0KCmFuZHJvaWQgewogICAgbmFtZXNwYWNlICdjb20ubWFyY2VsdmlsbGFsYmEudmJjbWludXRhamVzJwogICAgY29tcGlsZVNkayAzNQoKICAgIGRlZmF1bHRDb25maWcgewogICAgICAgIGFwcGxpY2F0aW9uSWQgImNvbS5tYXJjZWx2aWxsYWxiYS52YmNtaW51dGFqZXMiCiAgICAgICAgbWluU2RrIDI5CiAgICAgICAgdGFyZ2V0U2RrIDM1CiAgICAgICAgdmVyc2lvbkNvZGUgMQogICAgICAgIHZlcnNpb25OYW1lICIxLjAuMCIKICAgIH0KCiAgICBidWlsZFR5cGVzIHsKICAgICAgICBkZWJ1ZyB7CiAgICAgICAgICAgIGFwcGxpY2F0aW9uSWRTdWZmaXggIi5kZWJ1ZyIKICAgICAgICAgICAgdmVyc2lvbk5hbWVTdWZmaXggIi1kZWJ1ZyIKICAgICAgICB9CiAgICAgICAgcmVsZWFzZSB7CiAgICAgICAgICAgIG1pbmlmeUVuYWJsZWQgZmFsc2UKICAgICAgICB9CiAgICB9Cn0K","app/src/main/AndroidManifest.xml":"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPG1hbmlmZXN0IHhtbG5zOmFuZHJvaWQ9Imh0dHA6Ly9zY2hlbWFzLmFuZHJvaWQuY29tL2Fway9yZXMvYW5kcm9pZCI+CgogICAgPHVzZXMtcGVybWlzc2lvbiBhbmRyb2lkOm5hbWU9ImFuZHJvaWQucGVybWlzc2lvbi5JTlRFUk5FVCIgLz4KCiAgICA8YXBwbGljYXRpb24KICAgICAgICBhbmRyb2lkOmFsbG93QmFja3VwPSJ0cnVlIgogICAgICAgIGFuZHJvaWQ6aGFyZHdhcmVBY2NlbGVyYXRlZD0idHJ1ZSIKICAgICAgICBhbmRyb2lkOmljb249IkBkcmF3YWJsZS9hcHBfaWNvbiIKICAgICAgICBhbmRyb2lkOmxhYmVsPSJAc3RyaW5nL2FwcF9uYW1lIgogICAgICAgIGFuZHJvaWQ6c3VwcG9ydHNSdGw9InRydWUiCiAgICAgICAgYW5kcm9pZDp0aGVtZT0iQHN0eWxlL0FwcFRoZW1lIgogICAgICAgIGFuZHJvaWQ6dXNlc0NsZWFydGV4dFRyYWZmaWM9ImZhbHNlIj4KCiAgICAgICAgPGFjdGl2aXR5CiAgICAgICAgICAgIGFuZHJvaWQ6bmFtZT0iLk1haW5BY3Rpdml0eSIKICAgICAgICAgICAgYW5kcm9pZDpleHBvcnRlZD0idHJ1ZSIKICAgICAgICAgICAgYW5kcm9pZDpzY3JlZW5PcmllbnRhdGlvbj0idW5zcGVjaWZpZWQiPgogICAgICAgICAgICA8aW50ZW50LWZpbHRlcj4KICAgICAgICAgICAgICAgIDxhY3Rpb24gYW5kcm9pZDpuYW1lPSJhbmRyb2lkLmludGVudC5hY3Rpb24uTUFJTiIgLz4KICAgICAgICAgICAgICAgIDxjYXRlZ29yeSBhbmRyb2lkOm5hbWU9ImFuZHJvaWQuaW50ZW50LmNhdGVnb3J5LkxBVU5DSEVSIiAvPgogICAgICAgICAgICA8L2ludGVudC1maWx0ZXI+CiAgICAgICAgPC9hY3Rpdml0eT4KICAgIDwvYXBwbGljYXRpb24+Cgo8L21hbmlmZXN0Pgo=","app/src/main/res/values/strings.xml":"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHJlc291cmNlcz4KICAgIDxzdHJpbmcgbmFtZT0iYXBwX25hbWUiPlZCQyBNaW51dGFqZXM8L3N0cmluZz4KPC9yZXNvdXJjZXM+Cg==","app/src/main/res/values/themes.xml":"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHJlc291cmNlcz4KICAgIDxzdHlsZSBuYW1lPSJBcHBUaGVtZSIgcGFyZW50PSJAYW5kcm9pZDpzdHlsZS9UaGVtZS5NYXRlcmlhbC5MaWdodC5Ob0FjdGlvbkJhciI+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDpmb250RmFtaWx5Ij5zYW5zPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6d2luZG93QWN0aW9uTW9kZU92ZXJsYXkiPnRydWU8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDpjb2xvckFjY2VudCI+I0Y0NzcyMTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOnN0YXR1c0JhckNvbG9yIj4jMTcxQTFFPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6bmF2aWdhdGlvbkJhckNvbG9yIj4jMTcxQTFFPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6d2luZG93TGlnaHRTdGF0dXNCYXIiPmZhbHNlPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6d2luZG93TGlnaHROYXZpZ2F0aW9uQmFyIj5mYWxzZTwvaXRlbT4KICAgIDwvc3R5bGU+CjwvcmVzb3VyY2VzPgo=","app/src/main/res/values-v31/themes.xml":"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHJlc291cmNlcz4KICAgIDxzdHlsZSBuYW1lPSJBcHBUaGVtZSIgcGFyZW50PSJAYW5kcm9pZDpzdHlsZS9UaGVtZS5NYXRlcmlhbC5MaWdodC5Ob0FjdGlvbkJhciI+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDpmb250RmFtaWx5Ij5zYW5zPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6d2luZG93QWN0aW9uTW9kZU92ZXJsYXkiPnRydWU8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDpjb2xvckFjY2VudCI+I0Y0NzcyMTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOnN0YXR1c0JhckNvbG9yIj4jMTcxQTFFPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6bmF2aWdhdGlvbkJhckNvbG9yIj4jMTcxQTFFPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6d2luZG93TGlnaHRTdGF0dXNCYXIiPmZhbHNlPC9pdGVtPgogICAgICAgIDxpdGVtIG5hbWU9ImFuZHJvaWQ6d2luZG93TGlnaHROYXZpZ2F0aW9uQmFyIj5mYWxzZTwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOndpbmRvd1NwbGFzaFNjcmVlbkJhY2tncm91bmQiPiMxNzFBMUU8L2l0ZW0+CiAgICAgICAgPGl0ZW0gbmFtZT0iYW5kcm9pZDp3aW5kb3dTcGxhc2hTY3JlZW5BbmltYXRlZEljb24iPkBkcmF3YWJsZS9hcHBfaWNvbjwvaXRlbT4KICAgICAgICA8aXRlbSBuYW1lPSJhbmRyb2lkOndpbmRvd1NwbGFzaFNjcmVlbkljb25CYWNrZ3JvdW5kQ29sb3IiPiNGNDc3MjE8L2l0ZW0+CiAgICA8L3N0eWxlPgo8L3Jlc291cmNlcz4K","app/src/main/res/drawable-nodpi/app_icon.png":"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","app/src/main/java/com/marcelvillalba/vbcminutajes/MainActivity.java":"cGFja2FnZSBjb20ubWFyY2VsdmlsbGFsYmEudmJjbWludXRhamVzOwoKaW1wb3J0IGFuZHJvaWQuYXBwLkFjdGl2aXR5OwppbXBvcnQgYW5kcm9pZC5hcHAuRG93bmxvYWRNYW5hZ2VyOwppbXBvcnQgYW5kcm9pZC5jb250ZW50LkNvbnRlbnRWYWx1ZXM7CmltcG9ydCBhbmRyb2lkLmNvbnRlbnQuQ29udGV4dDsKaW1wb3J0IGFuZHJvaWQuY29udGVudC5JbnRlbnQ7CmltcG9ydCBhbmRyb2lkLmdyYXBoaWNzLkNvbG9yOwppbXBvcnQgYW5kcm9pZC5uZXQuVXJpOwppbXBvcnQgYW5kcm9pZC5vcy5CdW5kbGU7CmltcG9ydCBhbmRyb2lkLm9zLkVudmlyb25tZW50OwppbXBvcnQgYW5kcm9pZC5wcm92aWRlci5NZWRpYVN0b3JlOwppbXBvcnQgYW5kcm9pZC51dGlsLkJhc2U2NDsKaW1wb3J0IGFuZHJvaWQudmlldy5WaWV3OwppbXBvcnQgYW5kcm9pZC53ZWJraXQuRG93bmxvYWRMaXN0ZW5lcjsKaW1wb3J0IGFuZHJvaWQud2Via2l0LkphdmFzY3JpcHRJbnRlcmZhY2U7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5NaW1lVHlwZU1hcDsKaW1wb3J0IGFuZHJvaWQud2Via2l0LlZhbHVlQ2FsbGJhY2s7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5XZWJDaHJvbWVDbGllbnQ7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5XZWJSZXNvdXJjZUVycm9yOwppbXBvcnQgYW5kcm9pZC53ZWJraXQuV2ViUmVzb3VyY2VSZXF1ZXN0OwppbXBvcnQgYW5kcm9pZC53ZWJraXQuV2ViU2V0dGluZ3M7CmltcG9ydCBhbmRyb2lkLndlYmtpdC5XZWJWaWV3OwppbXBvcnQgYW5kcm9pZC53ZWJraXQuV2ViVmlld0NsaWVudDsKaW1wb3J0IGFuZHJvaWQud2lkZ2V0LlRvYXN0OwoKaW1wb3J0IGphdmEuaW8uT3V0cHV0U3RyZWFtOwppbXBvcnQgamF2YS51dGlsLkxvY2FsZTsKCnB1YmxpYyBjbGFzcyBNYWluQWN0aXZpdHkgZXh0ZW5kcyBBY3Rpdml0eSB7CgogICAgcHJpdmF0ZSBzdGF0aWMgZmluYWwgU3RyaW5nIEFQUF9VUkwgPQogICAgICAgICAgICAiaHR0cHM6Ly92YmMtbWludXRhamVzLWxpdmUubWFyY2VsdmlsbGFsYmEuY2hhdGdwdC5zaXRlIjsKCiAgICBwcml2YXRlIFdlYlZpZXcgd2ViVmlldzsKICAgIHByaXZhdGUgVmFsdWVDYWxsYmFjazxVcmlbXT4gZmlsZVBhdGhDYWxsYmFjazsKICAgIHByaXZhdGUgc3RhdGljIGZpbmFsIGludCBGSUxFX0NIT09TRVJfUkVRVUVTVCA9IDUwMTsKCiAgICBAT3ZlcnJpZGUKICAgIHByb3RlY3RlZCB2b2lkIG9uQ3JlYXRlKEJ1bmRsZSBzYXZlZEluc3RhbmNlU3RhdGUpIHsKICAgICAgICBzdXBlci5vbkNyZWF0ZShzYXZlZEluc3RhbmNlU3RhdGUpOwoKICAgICAgICBnZXRXaW5kb3coKS5zZXRTdGF0dXNCYXJDb2xvcihDb2xvci5yZ2IoMjMsIDI2LCAzMCkpOwogICAgICAgIGdldFdpbmRvdygpLnNldE5hdmlnYXRpb25CYXJDb2xvcihDb2xvci5yZ2IoMjMsIDI2LCAzMCkpOwoKICAgICAgICB3ZWJWaWV3ID0gbmV3IFdlYlZpZXcodGhpcyk7CiAgICAgICAgd2ViVmlldy5zZXRCYWNrZ3JvdW5kQ29sb3IoQ29sb3IuV0hJVEUpOwogICAgICAgIHNldENvbnRlbnRWaWV3KHdlYlZpZXcpOwoKICAgICAgICBXZWJTZXR0aW5ncyBzZXR0aW5ncyA9IHdlYlZpZXcuZ2V0U2V0dGluZ3MoKTsKICAgICAgICBzZXR0aW5ncy5zZXRKYXZhU2NyaXB0RW5hYmxlZCh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXREb21TdG9yYWdlRW5hYmxlZCh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXREYXRhYmFzZUVuYWJsZWQodHJ1ZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0QWxsb3dGaWxlQWNjZXNzKHRydWUpOwogICAgICAgIHNldHRpbmdzLnNldEFsbG93Q29udGVudEFjY2Vzcyh0cnVlKTsKICAgICAgICBzZXR0aW5ncy5zZXRMb2Fkc0ltYWdlc0F1dG9tYXRpY2FsbHkodHJ1ZSk7CiAgICAgICAgc2V0dGluZ3Muc2V0TWVkaWFQbGF5YmFja1JlcXVpcmVzVXNlckdlc3R1cmUoZmFsc2UpOwogICAgICAgIHNldHRpbmdzLnNldENhY2hlTW9kZShXZWJTZXR0aW5ncy5MT0FEX0RFRkFVTFQpOwogICAgICAgIHNldHRpbmdzLnNldFN1cHBvcnRab29tKGZhbHNlKTsKICAgICAgICBzZXR0aW5ncy5zZXRCdWlsdEluWm9vbUNvbnRyb2xzKGZhbHNlKTsKICAgICAgICBzZXR0aW5ncy5zZXREaXNwbGF5Wm9vbUNvbnRyb2xzKGZhbHNlKTsKCiAgICAgICAgd2ViVmlldy5hZGRKYXZhc2NyaXB0SW50ZXJmYWNlKG5ldyBBbmRyb2lkQnJpZGdlKHRoaXMpLCAiQW5kcm9pZEFwcCIpOwoKICAgICAgICB3ZWJWaWV3LnNldFdlYkNocm9tZUNsaWVudChuZXcgV2ViQ2hyb21lQ2xpZW50KCkgewogICAgICAgICAgICBAT3ZlcnJpZGUKICAgICAgICAgICAgcHVibGljIGJvb2xlYW4gb25TaG93RmlsZUNob29zZXIoCiAgICAgICAgICAgICAgICAgICAgV2ViVmlldyB3ZWJWaWV3LAogICAgICAgICAgICAgICAgICAgIFZhbHVlQ2FsbGJhY2s8VXJpW10+IGZpbGVQYXRoQ2FsbGJhY2tOZXcsCiAgICAgICAgICAgICAgICAgICAgRmlsZUNob29zZXJQYXJhbXMgZmlsZUNob29zZXJQYXJhbXMpIHsKCiAgICAgICAgICAgICAgICBpZiAoZmlsZVBhdGhDYWxsYmFjayAhPSBudWxsKSB7CiAgICAgICAgICAgICAgICAgICAgZmlsZVBhdGhDYWxsYmFjay5vblJlY2VpdmVWYWx1ZShudWxsKTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGZpbGVQYXRoQ2FsbGJhY2sgPSBmaWxlUGF0aENhbGxiYWNrTmV3OwoKICAgICAgICAgICAgICAgIEludGVudCBpbnRlbnQ7CiAgICAgICAgICAgICAgICB0cnkgewogICAgICAgICAgICAgICAgICAgIGludGVudCA9IGZpbGVDaG9vc2VyUGFyYW1zLmNyZWF0ZUludGVudCgpOwogICAgICAgICAgICAgICAgfSBjYXRjaCAoRXhjZXB0aW9uIGV4KSB7CiAgICAgICAgICAgICAgICAgICAgaW50ZW50ID0gbmV3IEludGVudChJbnRlbnQuQUNUSU9OX09QRU5fRE9DVU1FTlQpOwogICAgICAgICAgICAgICAgICAgIGludGVudC5hZGRDYXRlZ29yeShJbnRlbnQuQ0FURUdPUllfT1BFTkFCTEUpOwogICAgICAgICAgICAgICAgICAgIGludGVudC5zZXRUeXBlKCIqLyoiKTsKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICB0cnkgewogICAgICAgICAgICAgICAgICAgIHN0YXJ0QWN0aXZpdHlGb3JSZXN1bHQoaW50ZW50LCBGSUxFX0NIT09TRVJfUkVRVUVTVCk7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHRydWU7CiAgICAgICAgICAgICAgICB9IGNhdGNoIChFeGNlcHRpb24gZXgpIHsKICAgICAgICAgICAgICAgICAgICBmaWxlUGF0aENhbGxiYWNrID0gbnVsbDsKICAgICAgICAgICAgICAgICAgICBUb2FzdC5tYWtlVGV4dCgKICAgICAgICAgICAgICAgICAgICAgICAgICAgIE1haW5BY3Rpdml0eS50aGlzLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgIk5vIHNlIGhhIHBvZGlkbyBhYnJpciBlbCBzZWxlY3RvciBkZSBhcmNoaXZvcy4iLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgVG9hc3QuTEVOR1RIX1NIT1JUCiAgICAgICAgICAgICAgICAgICAgKS5zaG93KCk7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgfSk7CgogICAgICAgIHdlYlZpZXcuc2V0V2ViVmlld0NsaWVudChuZXcgV2ViVmlld0NsaWVudCgpIHsKICAgICAgICAgICAgQE92ZXJyaWRlCiAgICAgICAgICAgIHB1YmxpYyBib29sZWFuIHNob3VsZE92ZXJyaWRlVXJsTG9hZGluZyhXZWJWaWV3IHZpZXcsIFdlYlJlc291cmNlUmVxdWVzdCByZXF1ZXN0KSB7CiAgICAgICAgICAgICAgICBVcmkgdXJpID0gcmVxdWVzdC5nZXRVcmwoKTsKICAgICAgICAgICAgICAgIFN0cmluZyBzY2hlbWUgPSB1cmkuZ2V0U2NoZW1lKCk7CgogICAgICAgICAgICAgICAgaWYgKCJodHRwIi5lcXVhbHNJZ25vcmVDYXNlKHNjaGVtZSkgfHwgImh0dHBzIi5lcXVhbHNJZ25vcmVDYXNlKHNjaGVtZSkpIHsKICAgICAgICAgICAgICAgICAgICB2aWV3LmxvYWRVcmwodXJpLnRvU3RyaW5nKCkpOwogICAgICAgICAgICAgICAgICAgIHJldHVybiB0cnVlOwogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIHRyeSB7CiAgICAgICAgICAgICAgICAgICAgSW50ZW50IGV4dGVybmFsID0gbmV3IEludGVudChJbnRlbnQuQUNUSU9OX1ZJRVcsIHVyaSk7CiAgICAgICAgICAgICAgICAgICAgc3RhcnRBY3Rpdml0eShleHRlcm5hbCk7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHRydWU7CiAgICAgICAgICAgICAgICB9IGNhdGNoIChFeGNlcHRpb24gaWdub3JlZCkgewogICAgICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgQE92ZXJyaWRlCiAgICAgICAgICAgIHB1YmxpYyB2b2lkIG9uUGFnZUZpbmlzaGVkKFdlYlZpZXcgdmlldywgU3RyaW5nIHVybCkgewogICAgICAgICAgICAgICAgc3VwZXIub25QYWdlRmluaXNoZWQodmlldywgdXJsKTsKICAgICAgICAgICAgICAgIGluc3RhbGxEb3dubG9hZEJyaWRnZSh2aWV3KTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgQE92ZXJyaWRlCiAgICAgICAgICAgIHB1YmxpYyB2b2lkIG9uUmVjZWl2ZWRFcnJvcigKICAgICAgICAgICAgICAgICAgICBXZWJWaWV3IHZpZXcsCiAgICAgICAgICAgICAgICAgICAgV2ViUmVzb3VyY2VSZXF1ZXN0IHJlcXVlc3QsCiAgICAgICAgICAgICAgICAgICAgV2ViUmVzb3VyY2VFcnJvciBlcnJvcikgewogICAgICAgICAgICAgICAgc3VwZXIub25SZWNlaXZlZEVycm9yKHZpZXcsIHJlcXVlc3QsIGVycm9yKTsKICAgICAgICAgICAgICAgIGlmIChyZXF1ZXN0LmlzRm9yTWFpbkZyYW1lKCkpIHsKICAgICAgICAgICAgICAgICAgICBzaG93T2ZmbGluZVBhZ2UoKTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgIH0pOwoKICAgICAgICB3ZWJWaWV3LnNldERvd25sb2FkTGlzdGVuZXIoKHVybCwgdXNlckFnZW50LCBjb250ZW50RGlzcG9zaXRpb24sIG1pbWV0eXBlLCBjb250ZW50TGVuZ3RoKSAtPiB7CiAgICAgICAgICAgIGlmICh1cmwgPT0gbnVsbCkgcmV0dXJuOwoKICAgICAgICAgICAgaWYgKHVybC5zdGFydHNXaXRoKCJibG9iOiIpIHx8IHVybC5zdGFydHNXaXRoKCJkYXRhOiIpKSB7CiAgICAgIC
+          cat > settings.gradle <<'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+
+          rootProject.name = "VBCMinutajes"
+          include(":app")
+          EOF
+
+          cat > build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application' version '8.7.3' apply false
+          }
+          EOF
+
+          cat > gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          EOF
+
+          cat > app/build.gradle <<'EOF'
+          plugins {
+              id 'com.android.application'
+          }
+
+          android {
+              namespace 'com.marcelvillalba.vbcminutajes'
+              compileSdk 35
+
+              defaultConfig {
+                  applicationId "com.marcelvillalba.vbcminutajes"
+                  minSdk 26
+                  targetSdk 35
+                  versionCode 1
+                  versionName "1.0"
+              }
+          }
+          EOF
+
+          cat > app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"> <uses-permission android:name="android.permission.INTERNET" /> <application android:label="VBC Minutajes" android:theme="@style/AppTheme" android:usesCleartextTraffic="false"> <activity android:name=".MainActivity" android:exported="true"> <intent-filter> <action android:name="android.intent.action.MAIN" /> <category android:name="android.intent.category.LAUNCHER" /> </intent-filter> </activity> </application> </manifest>
+          EOF
+
+          cat > app/src/main/res/values/styles.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources> <style name="AppTheme" parent="@android:style/Theme.Material.Light.NoActionBar"> <item name="android:fontFamily">sans</item> <item name="android:colorAccent">#F47721</item> <item name="android:statusBarColor">#171A1E</item> <item name="android:navigationBarColor">#171A1E</item> <item name="android:windowLightStatusBar">false</item> </style> </resources>
+          EOF
+
+          cat > app/src/main/java/com/marcelvillalba/vbcminutajes/MainActivity.java <<'EOF'
+          package com.marcelvillalba.vbcminutajes;
+
+          import android.app.Activity;
+          import android.content.Intent;
+          import android.graphics.Color;
+          import android.net.Uri;
+          import android.os.Bundle;
+          import android.webkit.ValueCallback;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          public class MainActivity extends Activity {
+
+              private static final String APP_URL =
+                  "https://vbc-minutajes-live.marcelvillalba.chatgpt.site";
+
+              private WebView webView;
+              private ValueCallback<Uri[]> fileCallback;
+              private static final int FILE_REQUEST = 1001;
+
+              @Override
+              protected void onCreate(Bundle state) {
+                  super.onCreate(state);
+
+                  getWindow().setStatusBarColor(Color.rgb(23,26,30));
+                  getWindow().setNavigationBarColor(Color.rgb(23,26,30));
+
+                  webView = new WebView(this);
+                  setContentView(webView);
+
+                  WebSettings s = webView.getSettings();
+                  s.setJavaScriptEnabled(true);
+                  s.setDomStorageEnabled(true);
+                  s.setDatabaseEnabled(true);
+                  s.setAllowFileAccess(true);
+                  s.setAllowContentAccess(true);
+                  s.setMediaPlaybackRequiresUserGesture(false);
+
+                  webView.setWebViewClient(new WebViewClient() {
+                      @Override
+                      public boolean shouldOverrideUrlLoading( WebView view, WebResourceRequest request) {
+
+                          Uri uri = request.getUrl();
+                          String scheme = uri.getScheme();
+
+                          if ("http".equalsIgnoreCase(scheme) ||
+                              "https".equalsIgnoreCase(scheme)) {
+                              view.loadUrl(uri.toString());
+                              return true;
+                          }
+
+                          try {
+                              startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                              return true;
+                          } catch (Exception e) {
+                              return false;
+                          }
+                      }
+                  });
+
+                  webView.setWebChromeClient(new WebChromeClient() {
+                      @Override
+                      public boolean onShowFileChooser( WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
+
+                          if (fileCallback != null) {
+                              fileCallback.onReceiveValue(null);
+                          }
+
+                          fileCallback = callback;
+
+                          try {
+                              startActivityForResult(
+                                  params.createIntent(),
+                                  FILE_REQUEST
+                              );
+                              return true;
+                          } catch (Exception e) {
+                              fileCallback = null;
+                              return false;
+                          }
+                      }
+                  });
+
+                  if (state == null) {
+                      webView.loadUrl(APP_URL);
+                  } else {
+                      webView.restoreState(state);
+                  }
+              }
+
+              @Override
+              protected void onActivityResult( int requestCode, int resultCode, Intent data) {
+
+                  if (requestCode == FILE_REQUEST) {
+                      Uri[] result = null;
+
+                      if (resultCode == RESULT_OK && data != null &&
+                          data.getData() != null) {
+                          result = new Uri[]{data.getData()};
+                      }
+
+                      if (fileCallback != null) {
+                          fileCallback.onReceiveValue(result);
+                          fileCallback = null;
+                      }
+                      return;
+                  }
+
+                  super.onActivityResult(requestCode, resultCode, data);
+              }
+
+              @Override
+              protected void onSaveInstanceState(Bundle outState) {
+                  webView.saveState(outState);
+                  super.onSaveInstanceState(outState);
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (webView != null && webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+          }
+          EOF
+
+      - name: Build APK
+        shell: bash
+        run: |
+          gradle :app:assembleDebug --stacktrace
+          cp app/build/outputs/apk/debug/app-debug.apk VBC-Minutajes.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: VBC-Minutajes-APK
+          path: VBC-Minutajes.apk
+          retention-days: 30
