@@ -37,7 +37,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p app/src/main/java/com/marcelvillalba/vbcminutajes
-          mkdir -p app/src/main/res/values
+          mkdir -p app/src/main/res/drawable
+curl -fsSL https://raw.githubusercontent.com/villalba838-boop/MINUTAJES-VBC/main/VBC_Minutajes_icon_512.png -o app/src/main/res/drawable/app_icon.png
 
           cat > settings.gradle <<'EOF'
           pluginManagement {
@@ -92,7 +93,7 @@ jobs:
 
           cat > app/src/main/AndroidManifest.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android"> <uses-permission android:name="android.permission.INTERNET" /> <application android:label="VBC Minutajes" android:theme="@style/AppTheme" android:usesCleartextTraffic="false"> <activity android:name=".MainActivity" android:exported="true"> <intent-filter> <action android:name="android.intent.action.MAIN" /> <category android:name="android.intent.category.LAUNCHER" /> </intent-filter> </activity> </application> </manifest>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android"> <uses-permission android:name="android.permission.INTERNET" /> <application android:label="VBC Minutajes" android:icon="@drawable/app_icon" android:roundIcon="@drawable/app_icon" android:theme="@style/AppTheme" android:usesCleartextTraffic="false"> <activity android:name=".MainActivity" android:exported="true"> <intent-filter> <action android:name="android.intent.action.MAIN" /> <category android:name="android.intent.category.LAUNCHER" /> </intent-filter> </activity> </application> </manifest>
           EOF
 
           cat > app/src/main/res/values/styles.xml <<'EOF'
